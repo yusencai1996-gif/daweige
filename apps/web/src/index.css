@@ -1,13 +1,32 @@
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-    "Microsoft YaHei", Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.6;
-  color: #1a1a2e;
-  background: #f7f8fc;
+  --ink: oklch(15% 0.01 60);
+  --paper: oklch(97% 0.005 60);
+  --paper-2: oklch(94% 0.006 60);
+  --rule: oklch(15% 0.01 60 / 14%);
+  --mute: oklch(38% 0.01 60);
+  --moss: oklch(28% 0.05 160);
+  --moss-soft: oklch(28% 0.05 160 / 12%);
+  --moss-light: oklch(65% 0.08 160);
+
+  --display: "Anton", "Noto Serif SC", serif;
+  --serif: "Playfair Display", "Noto Serif SC", serif;
+  --body: "Inter", "Noto Serif SC", system-ui, sans-serif;
+  --cn-serif: "Noto Serif SC", "Playfair Display", serif;
+
+  font-family: var(--body);
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
 }
 
 * {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html,
@@ -19,10 +38,16 @@ body,
 }
 
 body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  text-wrap: pretty;
+  overflow-x: hidden;
 }
 
 a {
   color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--moss);
+  color: var(--paper);
 }
