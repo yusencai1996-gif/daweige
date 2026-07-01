@@ -1,0 +1,46 @@
+export type Lang = "zh" | "en";
+
+export const translations = {
+  zh: {
+    brand: "项目",
+    nav_features: "特性",
+    nav_about: "关于",
+    hero_badge: "全栈 TypeScript 应用",
+    hero_title: "你好，世界 👋",
+    hero_subtitle: "一个中英双语的 React + Vite 起点，开箱即用。",
+    cta_primary: "开始使用",
+    cta_secondary: "了解更多",
+    features_title: "核心特性",
+    features_subtitle: "为高效开发而生",
+    feature_1_title: "开箱即用",
+    feature_1_desc: "React 19 + Vite + TypeScript 已配置完毕",
+    feature_2_title: "中英双语",
+    feature_2_desc: "默认中文，一键切换英文，自动记忆",
+    feature_3_title: "可部署",
+    feature_3_desc: "一键打包，部署到公网，随时访问",
+    footer: "用 React + Vite 构建",
+    lang_button: "English",
+  },
+  en: {
+    brand: "Project",
+    nav_features: "Features",
+    nav_about: "About",
+    hero_badge: "Full-stack TypeScript App",
+    hero_title: "Hello, World 👋",
+    hero_subtitle: "A bilingual React + Vite starter, ready to go.",
+    cta_primary: "Get Started",
+    cta_secondary: "Learn More",
+    features_title: "Core Features",
+    features_subtitle: "Built for productive development",
+    feature_1_title: "Ready to Go",
+    feature_1_desc: "React 19 + Vite + TypeScript preconfigured",
+    feature_2_title: "Bilingual",
+    feature_2_desc: "Chinese by default, one-click English, remembered",
+    feature_3_title: "Deployable",
+    feature_3_desc: "Build and deploy to the web, anytime",
+    footer: "Built with React + Vite",
+    lang_button: "中文",
+  },
+} as const;
+
+export type TranslationKey = keyof typeof translations.zh;
