@@ -20,6 +20,8 @@ export const translations = {
     feature_3_desc: "一键打包，部署到公网，随时访问",
     footer: "用 React + Vite 构建",
     lang_button: "English",
+    demo_title: "实时接口演示",
+    demo_loading: "加载中…",
   },
   en: {
     brand: "Project",
@@ -40,6 +42,8 @@ export const translations = {
     feature_3_desc: "Build and deploy to the web, anytime",
     footer: "Built with React + Vite",
     lang_button: "中文",
+    demo_title: "Live API Demo",
+    demo_loading: "Loading…",
   },
 } as const;
 

@@ -1,8 +1,17 @@
+import { useEffect, useState } from "react";
 import { useI18n } from "./i18n/LanguageProvider";
 import "./App.css";
 
 function App() {
   const { t, toggle } = useI18n();
+  const [greeting, setGreeting] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/hello?name=daweige")
+      .then((r) => r.json())
+      .then((d) => setGreeting(d.message))
+      .catch(() => setGreeting("API unavailable"));
+  }, []);
 
   return (
     <div className="page">
@@ -44,6 +53,18 @@ function App() {
               <h3>{t("feature_3_title")}</h3>
               <p>{t("feature_3_desc")}</p>
             </div>
+          </div>
+        </section>
+
+        <section id="about" className="demo">
+          <h2 className="section-title">{t("demo_title")}</h2>
+          <div className="demo-card">
+            <span className="demo-method">GET</span>
+            <code className="demo-url">/api/hello?name=daweige</code>
+            <span className="demo-arrow">→</span>
+            <code className="demo-result">
+              {greeting ?? t("demo_loading")}
+            </code>
           </div>
         </section>
       </main>

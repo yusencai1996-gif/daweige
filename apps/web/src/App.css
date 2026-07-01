@@ -160,3 +160,41 @@ main {
   color: #999;
   font-size: 0.85rem;
 }
+
+/* API Demo */
+.demo {
+  width: 100%;
+  max-width: 720px;
+  padding: 0 2rem 5rem;
+  text-align: center;
+}
+.demo-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: #1a1a2e;
+  color: #e6e8ff;
+  border-radius: 12px;
+  padding: 0.85rem 1.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9rem;
+}
+.demo-method {
+  background: #5b6bff;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.demo-url {
+  color: #9aa0ff;
+}
+.demo-arrow {
+  opacity: 0.6;
+}
+.demo-result {
+  color: #7ee787;
+}
