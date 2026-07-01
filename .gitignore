@@ -32,3 +32,6 @@ node_modules/
 dist/
 dist-ssr/
 *.local
+
+# Claude Code（本机软链到 AGENTS.md，不进仓库）
+CLAUDE.md
