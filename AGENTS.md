@@ -81,3 +81,13 @@ project/
 
 <!-- 例如：特定目录禁止改动、必须兼容某版本、性能约束等 -->
 TODO：补充本项目独有的约束。
+
+## 部署（GitHub + Vercel 自动部署）
+
+- **GitHub 仓库**：`yusencai1996-gif/daweige`（SSH：`git@github.com:yusencai1996-gif/daweige.git`）
+- **Vercel 项目**：`daweige`，已连接上述仓库，分支 `main`
+- **Root Directory**：`apps/web`（单仓多包，Vercel 只构建前端）
+- **自动部署**：每次 `git push origin main` 自动触发 Vercel 构建并发布到生产域名
+- **生产网址**：https://daweige-three.vercel.app
+- **手动部署**（不走 git 时）：`cd apps/web && npx vercel --prod`
+- **推送鉴权**：SSH 用专用密钥 `~/.ssh/id_ed25519_github`（已在 `~/.ssh/config` 绑定 github.com）
