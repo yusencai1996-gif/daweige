@@ -45,25 +45,7 @@ project/
 > 约定：完成任务后，必须先跑 `npm run build`（类型检查 + 打包）通过再交付。
 > 注意：`api/` 由 Vercel 编译为 serverless 函数，**不在前端 tsc 范围**（tsconfig.app 仅 include `src`）。需验证接口时用 `vercel dev` 实测。
 
-## 环境 / 平台注意（重要）
-
-本项目运行在 **WSL2**，有以下已处理的坑，改动时务必保持：
-
-- **WSL 的 IPv6 出口不通**：Node/npm 默认走 IPv6 会挂死。已在 `~/.bashrc` 写入
-  `export NODE_OPTIONS="--dns-result-order=ipv4first"`。交互式终端自动生效；
-  若某次命令疑似卡住，手动加 `NODE_OPTIONS="--dns-result-order=ipv4first"` 前缀。
-- **npm 源**：已切到国内镜像 `https://registry.npmmirror.com`（`~/.npmrc`），
-  否则访问 npmjs.org 极慢/失败。
-- **项目必须放在 WSL 原生文件系统（~/project）**，不要放 `/mnt/e` 等 Windows 盘——
-  小文件 I/O 会慢 10~100 倍，`npm install` 会超时。Windows 侧可用
-  `\\wsl.localhost\<发行版>\home\administrator\project` 访问。
-
-## 代码约定
-
-- 不主动添加注释，除非用户明确要求。
-- 遵循已有代码风格：命名、缩进、导入顺序与周边文件保持一致。
-- 新建文件前先查看同类现有文件，沿用其框架与库选择。
-- 不暴露或提交密钥、令牌等敏感信息。
+> 本机环境（WSL/IPv6/npm 镜像/原生文件系统）与通用代码约定见**全局** `~/.config/opencode/AGENTS.md`（所有项目自动生效），本文件只写本项目专属内容。
 
 ## Git 约定
 
