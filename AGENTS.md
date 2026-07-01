@@ -6,8 +6,8 @@
 
 ## 项目简介
 
-- **名称**：project
-- **类型**：Web 前端（React + Vite + TypeScript），作为全平台（桌面/Web/安卓/iOS）开发的统一起点，后续按需扩展后端、桌面（Tauri/Electron）、移动端（React Native）
+- **名称**：project（npm workspaces 单仓多包）
+- **类型**：全栈 TypeScript —— 前端 React + Vite（`apps/web`），后端 Hono on Node（`apps/server`）。作为全平台（桌面/Web/安卓/iOS）开发的统一起点，后续按需扩展桌面（Tauri/Electron）、移动端（React Native）
 - **目标**：以 TypeScript 为核心，渐进式搭建跨端应用
 
 ## 目录结构
@@ -16,27 +16,38 @@
 project/
 ├── AGENTS.md          # 本文件：项目上下文与约定（opencode 自动读取）
 ├── opencode.json      # opencode 配置
-├── package.json       # npm 依赖与脚本
-├── tsconfig*.json     # TypeScript 配置（app / node）
-├── vite.config.ts     # Vite 配置
-├── index.html         # 入口 HTML
-├── public/            # 静态资源（favicon 等）
-├── src/               # 源代码（入口 main.tsx、根组件 App.tsx）
+├── package.json       # 根：workspaces 配置与聚合脚本
+├── apps/
+│   ├── web/           # 前端：React + Vite + TypeScript
+│   │   ├── package.json
+│   │   ├── index.html / vite.config.ts / tsconfig*.json
+│   │   ├── public/    # 静态资源
+│   │   └── src/       # 源码（main.tsx、App.tsx）
+│   └── server/        # 后端：Hono on Node + TypeScript
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── src/index.ts
 ├── tests/             # 测试（待启用）
 ├── docs/              # 文档
 └── .opencode/         # opencode 扩展：agent / command / skill
 ```
 
+> 端口约定：前端 dev `5173`，后端 dev `3000`。前端 Vite 已配 `/api` 代理到 `http://localhost:3000`，开发时前端直接请求 `/api/...` 即可，无需处理跨域。
+
 ## 开发命令
 
+在**仓库根目录**执行（npm workspaces 自动路由到对应子包）：
+
 - 安装依赖：`npm install`
-- 开发服务器：`npm run dev`（Vite，默认 http://localhost:5173）
-- 类型检查：`npx tsc -b`
-- 构建：`npm run build`（= `tsc -b && vite build`，产物在 `dist/`）
-- 预览构建产物：`npm run preview`
+- 启动前端开发服务器：`npm run dev:web`（Vite，http://localhost:5173）
+- 启动后端开发服务器：`npm run dev:server`（tsx watch，http://localhost:3000）
+  - 开发时建议**两个终端**分别跑 `dev:web` 和 `dev:server`
+- 后端类型检查：`npm run typecheck -w server`
+- 构建（前后端一起）：`npm run build`
+- 单独构建：`npm run build:web` / `npm run build:server`
 - 测试：待启用（暂未接入框架）
 
-> 约定：完成任务后，必须先运行 `npm run build`（含类型检查）再交付。
+> 约定：完成任务后，必须先跑 `npm run build`（前后端类型检查 + 打包）通过再交付。
 
 ## 环境 / 平台注意（重要）
 
