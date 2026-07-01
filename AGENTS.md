@@ -6,8 +6,8 @@
 
 ## 项目简介
 
-- **名称**：project（npm workspaces 单仓多包）
-- **类型**：全栈 TypeScript —— 前端 React + Vite（`apps/web`），后端 Hono on Node（`apps/server`）。作为全平台（桌面/Web/安卓/iOS）开发的统一起点，后续按需扩展桌面（Tauri/Electron）、移动端（React Native）
+- **名称**：project（npm workspaces 单仓）
+- **类型**：全栈 TypeScript —— 前端 React + Vite + 后端 Hono（Vercel serverless 函数，位于 `apps/web/api/`）。作为全平台（桌面/Web/安卓/iOS）开发的统一起点，后续按需扩展桌面（Tauri/Electron）、移动端（React Native）
 - **目标**：以 TypeScript 为核心，渐进式搭建跨端应用
 
 ## 目录结构
@@ -18,36 +18,32 @@ project/
 ├── opencode.json      # opencode 配置
 ├── package.json       # 根：workspaces 配置与聚合脚本
 ├── apps/
-│   ├── web/           # 前端：React + Vite + TypeScript
-│   │   ├── package.json
-│   │   ├── index.html / vite.config.ts / tsconfig*.json
-│   │   ├── public/    # 静态资源
-│   │   └── src/       # 源码（main.tsx、App.tsx）
-│   └── server/        # 后端：Hono on Node + TypeScript
-│       ├── package.json
-│       ├── tsconfig.json
-│       └── src/index.ts
+│   └── web/           # 前端 + 后端（同一个 Vercel 项目）
+│       ├── api/       # 后端：Hono serverless 函数（[[...route]].ts，edge 运行时）
+│       ├── src/       # 前端源码（main.tsx、App.tsx、i18n/）
+│       ├── public/    # 静态资源
+│       └── index.html / vite.config.ts / tsconfig*.json / package.json
 ├── tests/             # 测试（待启用）
 ├── docs/              # 文档
 └── .opencode/         # opencode 扩展：agent / command / skill
 ```
 
-> 端口约定：前端 dev `5173`，后端 dev `3000`。前端 Vite 已配 `/api` 代理到 `http://localhost:3000`，开发时前端直接请求 `/api/...` 即可，无需处理跨域。
+> 本地全栈开发：在 `apps/web` 跑 `npx vercel dev`（同时启动前端 + `/api`，与生产行为一致，推荐）。
+> 纯前端快速预览（不含 API）：`npm run dev:web`。生产环境前后端同源 `daweige-dev.vercel.app`，`/api/...` 免跨域。
 
 ## 开发命令
 
-在**仓库根目录**执行（npm workspaces 自动路由到对应子包）：
+在**仓库根目录**执行：
 
 - 安装依赖：`npm install`
-- 启动前端开发服务器：`npm run dev:web`（Vite，http://localhost:5173）
-- 启动后端开发服务器：`npm run dev:server`（tsx watch，http://localhost:3000）
-  - 开发时建议**两个终端**分别跑 `dev:web` 和 `dev:server`
-- 后端类型检查：`npm run typecheck -w server`
-- 构建（前后端一起）：`npm run build`
-- 单独构建：`npm run build:web` / `npm run build:server`
+- 本地全栈开发（前端 + API，推荐）：`cd apps/web && npx vercel dev`
+- 纯前端快速预览（不含 API）：`npm run dev:web`（Vite，http://localhost:5173）
+- 构建前端：`npm run build:web`（= `tsc -b && vite build`）
+- 构建（等同 build:web）：`npm run build`
 - 测试：待启用（暂未接入框架）
 
-> 约定：完成任务后，必须先跑 `npm run build`（前后端类型检查 + 打包）通过再交付。
+> 约定：完成任务后，必须先跑 `npm run build`（类型检查 + 打包）通过再交付。
+> 注意：`api/` 由 Vercel 编译为 serverless 函数，**不在前端 tsc 范围**（tsconfig.app 仅 include `src`）。需验证接口时用 `vercel dev` 实测。
 
 ## 环境 / 平台注意（重要）
 
@@ -86,8 +82,9 @@ TODO：补充本项目独有的约束。
 
 - **GitHub 仓库**：`yusencai1996-gif/daweige`（SSH：`git@github.com:yusencai1996-gif/daweige.git`）
 - **Vercel 项目**：`daweige`，已连接上述仓库，分支 `main`
-- **Root Directory**：`apps/web`（单仓多包，Vercel 只构建前端）
-- **自动部署**：每次 `git push origin main` 自动触发 Vercel 构建并发布到生产域名
-- **生产网址**：https://daweige-three.vercel.app
+- **Root Directory**：`apps/web`（Vercel 同时构建前端 `dist` 和 `api/` serverless 函数）
+- **自动部署**：每次 `git push origin main` 自动触发 Vercel 构建并发布到生产域名（前端 + API 一起更新）
+- **生产网址**：https://daweige-dev.vercel.app
+- **线上 API**（edge 运行时）：`GET /api`、`GET /api/health`、`GET /api/hello?name=xxx`
 - **手动部署**（不走 git 时）：`cd apps/web && npx vercel --prod`
 - **推送鉴权**：SSH 用专用密钥 `~/.ssh/id_ed25519_github`（已在 `~/.ssh/config` 绑定 github.com）
