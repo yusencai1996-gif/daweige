@@ -43,6 +43,8 @@ project/
 - 测试：待启用（暂未接入框架）
 
 > 约定：完成任务后，必须先跑 `npm run build`（类型检查 + 打包）通过再交付。
+>
+> ⚠️ **本机构建坑（rolldown 原生绑定）**：Vite 8 用 rolldown 打包，`npm install` 可能因 npm optional-deps bug（npm/cli#4828）漏装 `@rolldown/binding-linux-x64-gnu`，build 报 `Cannot find native binding`。修法：`npm install @rolldown/binding-linux-x64-gnu --no-save`（不动 lockfile），或删 `node_modules`+`package-lock.json` 重装。本机已用前者修好。
 > 注意：`api/` 由 Vercel 编译为 serverless 函数，**不在前端 tsc 范围**（tsconfig.app 仅 include `src`）。需验证接口时用 `vercel dev` 实测。
 
 > 本机环境（WSL/IPv6/npm 镜像/原生文件系统）与通用代码约定见**全局** `~/.config/opencode/AGENTS.md`（所有项目自动生效），本文件只写本项目专属内容。
@@ -60,7 +62,15 @@ project/
 <!-- 例如：特定目录禁止改动、必须兼容某版本、性能约束等 -->
 TODO：补充本项目独有的约束。
 
-## 部署（GitHub + Vercel 自动部署）
+## 部署（双轨：Vercel 全栈 + 首尔静态）
+
+> ⚠️ **同一份源码有两套部署，互不同步、各自手动触发。** 森哥实际使用的是 `ai.dawei.host`（首尔静态）。
+> - **Vercel**（全栈，含 Hono API）：`daweige-dev.vercel.app`，`git push origin main` 自动部署。
+> - **首尔服务器**（纯静态，**无 API**）：自定义域名 `ai.dawei.host` → `43.166.2.116`，web 根 `/var/www/daweige`，手动 rsync `dist/`。
+> 已验证：本机 `npm run build` 产物 hash（`index-B5wdR8JT.css` / `index-wn4daU9a.js`）与首尔线上一致，即首尔静态站 = 本仓库构建产物。
+> nginx 配置：`/usr/local/openresty/nginx/conf/conf.d/ai.dawei.host.conf`（HTTP→HTTPS、SPA fallback、独立 SSL 证书 `ai.dawei.host` 2026-07-03~2026-10-01，自动续期随首页那套 reload hook）。
+
+### Track 1 —— Vercel（全栈，自动）
 
 - **GitHub 仓库**：`yusencai1996-gif/daweige`（SSH：`git@github.com:yusencai1996-gif/daweige.git`）
 - **Vercel 项目**：`daweige`，已连接上述仓库，分支 `main`
@@ -70,3 +80,17 @@ TODO：补充本项目独有的约束。
 - **线上 API**（edge 运行时）：`GET /api`、`GET /api/health`、`GET /api/hello?name=xxx`
 - **手动部署**（不走 git 时）：`cd apps/web && npx vercel --prod`
 - **推送鉴权**：SSH 用专用密钥 `~/.ssh/id_ed25519_github`（已在 `~/.ssh/config` 绑定 github.com）
+
+### Track 2 —— 首尔静态（`ai.dawei.host`，手动 rsync）
+
+森哥用的就是这个。改完前端后部署（只推前端 `dist/`，不含 API）：
+
+```bash
+npm run build   # 在仓库根，产物在 apps/web/dist/
+rsync -avz --delete \
+  -e "ssh -i /home/administrator/.ssh/id_ed25519_1panel" \
+  /home/administrator/liulanqishouye/daweige/apps/web/dist/ \
+  ubuntu@43.166.2.116:/var/www/daweige/
+```
+
+> 首尔站是**纯静态托管，没有 `/api`**。前端 `App.tsx:10` 会 `fetch("/api/hello?name=daweige")`（结果不渲染，仅作后端联通探测），在 `ai.dawei.host` 上这条请求会 **404**——页面不报错，但 network 面板能看到失败。两套并存的理由：Vercel 需代理访问（海外用），首尔国内直连可达。
